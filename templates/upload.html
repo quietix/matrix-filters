@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="text-center">Matrix Filters App</h1>
+    <p class="text-center mb-4">Upload an image and apply matrix filters</p>
+
+    <form class="d-flex align-items-center justify-content-around align-self-start" id="uploadForm" method="post" enctype="multipart/form-data" action="{{ url_for('home') }}">
+        <div class="form-group text-center">
+            <input type="file" class="form-control-file" name="uploaded_img" id="imageInput" accept="image/*" required onchange="submitForm()">
+        </div>
+    </form>
+
+    <script>
+        function submitForm() {
+            document.getElementById('uploadForm').submit();
+        }
+    </script>
+
+    <hr>
+
+    {% if img_filename %}
+    <div class="text-center d-flex align-items-center justify-content-around">
+        <div class="img-wrapper m-3">
+            <img class="border" src="{{ url_for('static', filename='uploads/' + session_id + '/' + img_filename) }}">
+        </div>
+        <div>
+            <a href="{{ url_for('edit_img') }}" class="btn btn-secondary">Go to filters</a>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}

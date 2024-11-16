@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="text-center">Edit Image</h1>
+
+    {% if img_filename %}
+    <div class="mt-5 text-center">
+        <div class="img-wrapper">
+            <img class="border" src="{{ url_for('static', filename='uploads/' + session_id + '/' + img_filename) }}">
+        </div>
+    </div>
+    {% else %}
+        <p>No image uploaded or selected for editing.</p>
+    {% endif %}
+{% endblock %}
