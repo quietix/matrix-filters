@@ -108,7 +108,7 @@ def home():
         if uploaded_img and _is_allowed_file(uploaded_img.filename):
             uploaded_img_filename = secure_filename(uploaded_img.filename)
             uploads_dir = _get_uploads_dir()
-            logger.debug(f'uploads_dir = {uploads_dir}')
+
             if not uploads_dir:
                 logger.error(f"Uploads directory wasn't created.")
                 return redirect(url_for('home'))

@@ -2,8 +2,8 @@ import os
 import logging
 import colorlog
 
-log_filename = '../app.log'
-log_directory = os.path.abspath('..')
+log_filename = 'app.log'
+log_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 log_path = os.path.join(log_directory, log_filename)
 
