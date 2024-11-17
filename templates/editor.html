@@ -1,15 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="text-center">Edit Image</h1>
+    <h2 class="text-center">Edit Image</h2>
 
     {% if img_filename %}
-    <div class="mt-5 text-center">
-        <div class="img-wrapper">
-            <img class="border" src="{{ url_for('static', filename='uploads/' + session_id + '/' + img_filename) }}">
+        <div class="text-center d-flex align-items-center justify-content-center">
+            <div class="img-wrapper">
+                <img class="border" src="{{ url_for('static', filename='uploads/' + session_id + '/' + img_filename) }}" alt="Original Image">
+            </div>
+            <div class="mt-3 text-center">
+                <a href="{{ url_for('save_current_image', img_filename=img_filename) }}" class="btn btn-primary me-2">Save Image</a>
+            </div>
         </div>
-    </div>
+    
+        <hr>
+
+        <h2 class="text-center">Filters</h2>
+        <div class="filter-tape d-flex flex-row justify-content-center align-items-center mt-4 overflow-auto">
+            {% for filter_name, filter_img in filters.items() %}
+            <a href="{{ url_for('apply_filter', filter_name=filter_name) }}">
+                <figure class="filter-preview m-2 border filters-border">
+                    <img src="{{ url_for('static', filename='images/' + filter_img) }}" alt="{{ filter_name }}" title="{{ filter_name }}">
+                    <figcaption class="text-center">{{ filter_name | capitalize }}</figcaption>
+                </figure>
+            </a>
+            {% endfor %}
+        </div>
     {% else %}
-        <p>No image uploaded or selected for editing.</p>
+        <p class="text-center">No image uploaded or selected for editing.</p>
     {% endif %}
 {% endblock %}
