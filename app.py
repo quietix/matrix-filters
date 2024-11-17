@@ -206,4 +206,4 @@ def switch_img_to_current(filtered_img_filename):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
