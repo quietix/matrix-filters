@@ -12,4 +12,4 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 app.config['UPLOAD_FOLDER'] = os.path.abspath('static/uploads')
 app.config['OUTPUT_FOLDER'] = os.path.abspath('static/outputs')
 app.config['ALLOWED_EXTENSIONS'] = {'.png', '.jpg', '.jpeg', '.gif'}
-app.config["SESSION_TYPE"] = "filesystem"
+app.config['DEBUG'] = bool(int(os.environ['DEBUG']))
