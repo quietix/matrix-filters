@@ -1,12 +1,26 @@
 import os
-from flask import render_template, request, redirect, url_for, make_response, Response, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, make_response, Response, send_from_directory
+from dotenv.main import load_dotenv
 from werkzeug.utils import secure_filename
-from config import logger, app
+from config import logger
 import shutil
 import uuid
 from filters import apply_blur, apply_grey, apply_sharpen, apply_emboss, apply_sobel, apply_canny, \
                     apply_gaussian_blur, apply_invert, apply_sepia, apply_vignette, apply_posterize, \
                     adjust_saturation
+
+load_dotenv()
+
+app = Flask(__name__,
+            template_folder=os.path.join(os.path.dirname(__file__), './templates'),
+            static_folder=os.path.join(os.path.dirname(__file__), './static'))
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600
+app.config['UPLOAD_FOLDER'] = os.path.abspath('static/uploads')
+app.config['OUTPUT_FOLDER'] = os.path.abspath('static/outputs')
+app.config['ALLOWED_EXTENSIONS'] = {'.png', '.jpg', '.jpeg', '.gif'}
+app.config['DEBUG'] = bool(int(os.environ['DEBUG']))
+app.config['FLASK_APP'] = 'home'
 
 filters = {'blur': 'blur.jpg',
            'grey': 'grey.jpg',
