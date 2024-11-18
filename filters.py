@@ -1,206 +1,113 @@
-from PIL import Image, ImageFilter, ImageEnhance
 from config import logger
+import matplotlib.pylab as plt
 import numpy as np
-from matplotlib.image import imread
-from scipy import ndimage
-from skimage import feature
-import cv2
+from scipy.ndimage import convolve
 
 
-def apply_blur(original_img_path, filtered_img_path) -> bool:
-    try:
-        img = Image.open(original_img_path)
-        img = img.filter(ImageFilter.BLUR)
-        img.save(filtered_img_path)
-        return True
-    except Exception as e:
-        logger.error(f"Error applying blur filter: {e}")
-        return False
+def _error_decorator(error_message: str):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+                return True
+            except Exception as e:
+                logger.error(f"{error_message}: {e}")
+                return False
+        return wrapper
+    return decorator
 
 
-def apply_grey(original_img_path, filtered_img_path) -> bool:
-    try:
-        img = Image.open(original_img_path)
-        img = img.convert("L")
-        img.save(filtered_img_path)
-        return True
-    except Exception as e:
-        logger.error(f"Error applying greyscale filter: {e}")
-        return False
+@_error_decorator("Error in applying gray filter")
+def turn_gray(original_img_path, filtered_img_path):
+    img_plt = plt.imread(original_img_path)
+    gray = np.mean(img_plt, axis=2)
+    plt.imsave(filtered_img_path, gray,  cmap='gray')
 
 
-def apply_sharpen(original_img_path, filtered_img_path) -> bool:
-    try:
-        img = Image.open(original_img_path)
-        sharpen_kernel = [
-            0, -1, 0,
-            -1, 5, -1,
-            0, -1, 0
-        ]
-        img = img.filter(ImageFilter.Kernel((3, 3), sharpen_kernel))
-        img.save(filtered_img_path)
-        return True
-    except Exception as e:
-        logger.error(f"Error applying sharpen filter: {e}")
-        return False
+@_error_decorator("Error in inverting colors")
+def invert_colors(original_img_path, filtered_img_path):
+    img_plt = plt.imread(original_img_path)
+    new_img_plt = img_plt.copy()
+
+    new_img_plt = 255 - new_img_plt
+
+    plt.imsave(filtered_img_path, new_img_plt)
 
 
-def apply_emboss(original_img_path, filtered_img_path) -> bool:
-    try:
-        img = Image.open(original_img_path)
-        emboss_kernel = [
-            -2, -1, 0,
-            -1, 1, 1,
-            0, 1, 2
-        ]
-        img = img.filter(ImageFilter.Kernel((3, 3), emboss_kernel))
-        img.save(filtered_img_path)
-        return True
-    except Exception as e:
-        logger.error(f"Error applying emboss filter: {e}")
-        return False
+@_error_decorator("Error in leaving only red")
+def leave_only_red(original_img_path, filtered_img_path):
+    img_plt = plt.imread(original_img_path)
+    new_img_plt = img_plt.copy()
+
+    new_img_plt[:, :, 1], new_img_plt[:, :, 2] = 0, 0
+
+    plt.imsave(filtered_img_path, new_img_plt)
 
 
-def apply_sobel(original_img_path, filtered_img_path) -> bool:
-    try:
-        original_image = imread(original_img_path)
+@_error_decorator("Error in leaving only green")
+def leave_only_green(original_img_path, filtered_img_path):
+    img_plt = plt.imread(original_img_path)
+    new_img_plt = img_plt.copy()
 
-        if len(original_image.shape) == 3:
-            original_image = np.mean(original_image, axis=2)
+    new_img_plt[:, :, 0], new_img_plt[:, :, 2] = 0, 0
 
-        dx, dy = ndimage.sobel(original_image, axis=0), ndimage.sobel(original_image, axis=1)
-        sobel_filtered_image = np.hypot(dx, dy)
-        sobel_filtered_image = sobel_filtered_image / np.max(sobel_filtered_image)
-
-        sobel_filtered_image = (sobel_filtered_image * 255).astype(np.uint8)
-        Image.fromarray(sobel_filtered_image).save(filtered_img_path)
-
-        return True
-
-    except Exception as e:
-        logger.error(f"Error applying Sobel filter: {e}")
-        return False
+    plt.imsave(filtered_img_path, new_img_plt)
 
 
-def apply_canny(original_img_path, filtered_img_path) -> bool:
-    try:
-        original_image = imread(original_img_path)
+@_error_decorator("Error in leaving only blue")
+def leave_only_blue(original_img_path, filtered_img_path):
+    img_plt = plt.imread(original_img_path)
+    new_img_plt = img_plt.copy()
 
-        if len(original_image.shape) == 3:
-            original_image = np.mean(original_image, axis=2)
+    new_img_plt[:, :, 0], new_img_plt[:, :, 1] = 0, 0
 
-        edges = feature.canny(original_image, sigma=1.0)
-        Image.fromarray((edges * 255).astype(np.uint8)).save(filtered_img_path)
-
-        return True
-
-    except Exception as e:
-        logger.error(f"Error applying Canny edge detection: {e}")
-        return False
+    plt.imsave(filtered_img_path, new_img_plt)
 
 
-def apply_gaussian_blur(original_img_path, filtered_img_path) -> bool:
-    try:
-        img = Image.open(original_img_path)
-        img = img.filter(ImageFilter.GaussianBlur(radius=5))
-        img.save(filtered_img_path)
-        return True
-    except Exception as e:
-        logger.error(f"Error applying Gaussian blur filter: {e}")
-        return False
+@_error_decorator("Error in applying blur")
+def apply_blur(original_img_path, filtered_img_path):
+    img_plt = plt.imread(original_img_path)
+    new_img_plt = img_plt.copy()
+
+    blur_kernel = np.ones((3, 3)) / 9
+
+    for channel in range(3):
+        new_img_plt[:, :, channel] = convolve(new_img_plt[:, :, channel], blur_kernel)
+
+    plt.imsave(filtered_img_path, new_img_plt)
 
 
-def apply_invert(original_img_path, filtered_img_path) -> bool:
-    try:
-        img = Image.open(original_img_path)
-        img = Image.eval(img, lambda x: 255 - x)
-        img.save(filtered_img_path)
-        return True
-    except Exception as e:
-        logger.error(f"Error applying invert filter: {e}")
-        return False
+@_error_decorator("Error in applying blur")
+def apply_blur(original_img_path, filtered_img_path):
+    img_plt = plt.imread(original_img_path)
+    new_img_plt = img_plt.copy()
+
+    blur_kernel = np.array(((1, 4, 6, 4, 1),
+                            (4, 16, 24, 16, 4),
+                            (6, 24, 36, 24, 6),
+                            (4, 16, 24, 16, 4),
+                            (1, 4, 6, 4, 1),)) / 256
+
+    for channel in range(3):
+        new_img_plt[:, :, channel] = convolve(new_img_plt[:, :, channel], blur_kernel)
+
+    plt.imsave(filtered_img_path, new_img_plt)
 
 
-def apply_sepia(original_img_path, filtered_img_path) -> bool:
-    try:
-        img = Image.open(original_img_path)
-        width, height = img.size
-        pixels = img.load()
+@_error_decorator("Error in applying sobel")
+def apply_sobel(original_img_path, filtered_img_path):
+    img_plt = plt.imread(original_img_path)
+    grayscale_img = np.mean(img_plt, axis=2)
 
-        for py in range(height):
-            for px in range(width):
-                r, g, b = img.getpixel((px, py))
+    gx_kernel = np.array(((1, 0, -1),
+                          (2, 0, -2),
+                          (1, 0, -1)))
+    gy_kernel = np.array(((1, 2, 1),
+                          (0, 0, 0),
+                          (-1, -2, -1)))
 
-                tr = int(0.393 * r + 0.769 * g + 0.189 * b)
-                tg = int(0.349 * r + 0.686 * g + 0.168 * b)
-                tb = int(0.272 * r + 0.534 * g + 0.131 * b)
+    gx = convolve(grayscale_img, gx_kernel)
+    gy = convolve(grayscale_img, gy_kernel)
+    sobel_filtered_image = np.hypot(gx, gy)
 
-                if tr > 255:
-                    tr = 255
-                if tg > 255:
-                    tg = 255
-                if tb > 255:
-                    tb = 255
-
-                pixels[px, py] = (tr, tg, tb)
-
-        img.save(filtered_img_path)
-        return True
-    except Exception as e:
-        logger.error(f"Error applying sepia filter: {e}")
-        return False
-
-
-def apply_vignette(original_img_path, filtered_img_path) -> bool:
-    try:
-        img = Image.open(original_img_path)
-        width, height = img.size
-        pixels = img.load()
-
-        center_x, center_y = width / 2, height / 2
-        max_distance = np.sqrt(center_x ** 2 + center_y ** 2)
-
-        for y in range(height):
-            for x in range(width):
-                dx = x - center_x
-                dy = y - center_y
-                distance = np.sqrt(dx**2 + dy**2)
-                factor = 1 - (distance / max_distance)
-
-                r, g, b = img.getpixel((x, y))
-                r = int(r * factor)
-                g = int(g * factor)
-                b = int(b * factor)
-                pixels[x, y] = (r, g, b)
-
-        img.save(filtered_img_path)
-        return True
-    except Exception as e:
-        logger.error(f"Error applying vignette effect: {e}")
-        return False
-
-
-def apply_posterize(original_img_path, filtered_img_path) -> bool:
-    try:
-        img = Image.open(original_img_path)
-        img = img.convert("RGB")
-
-        img = img.point(lambda p: p // 64 * 64)
-
-        img.save(filtered_img_path)
-        return True
-    except Exception as e:
-        logger.error(f"Error applying posterize effect: {e}")
-        return False
-
-
-def adjust_saturation(original_img_path, filtered_img_path, factor=1.5) -> bool:
-    try:
-        img = Image.open(original_img_path)
-        img = img.convert("RGB")
-        img = ImageEnhance.Color(img).enhance(factor)
-        img.save(filtered_img_path)
-        return True
-    except Exception as e:
-        logger.error(f"Error adjusting saturation: {e}")
-        return False
+    plt.imsave(filtered_img_path, sobel_filtered_image, cmap='gray')
