@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="text-center">Applied Filter: '{{ filter_name | capitalize }}'</h2>
+<h2 class="text-center">Applied Filter: '{{ filter_name | replace('-', ' ') | capitalize }}'</h2>
 
 <div class="mt-5 d-flex flex-column align-items-center gap-4">
     <div>
@@ -12,7 +12,7 @@
     </div>
 
     <div class="mt-5">
-        <h5 class="text-center">Filtered Image ({{ filter_name | replace('_', ' ') | capitalize }})</h5>
+        <h5 class="text-center">Filtered Image ({{ filter_name | replace('-', ' ') | capitalize }})</h5>
         {% if filtered_img_filename %}
         <div class="img-wrapper-editor">
             <img src="{{ url_for('static', filename='outputs/' + session_id + '/' + filtered_img_filename) }}" alt="Filtered Image">

@@ -21,7 +21,7 @@
             <a href="{{ url_for('apply_filter', filter_name=filter_name) }}">
                 <figure class="filter-preview m-2 border filters-border">
                     <img src="{{ url_for('static', filename='images/' + filter_img) }}" alt="{{ filter_name }}" title="{{ filter_name }}">
-                    <figcaption class="text-center">{{ filter_name | replace('_', ' ') | capitalize }}</figcaption>
+                    <figcaption class="text-center">{{ filter_name | replace('-', ' ') | capitalize }}</figcaption>
                 </figure>
             </a>
             {% endfor %}
