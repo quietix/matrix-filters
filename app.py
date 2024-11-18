@@ -20,7 +20,7 @@ app.config['DEBUG'] = bool(int(os.environ['DEBUG']))
 app.config['FLASK_APP'] = 'home'
 
 filters = {'grayscale': 'gray.jpg',
-           'invert_colors': 'invert_colors.jpg',
+           'invert-colors': 'invert_colors.jpg',
            'red': 'red.jpg',
            'green': 'green.jpg',
            'blue': 'blue.jpg',
@@ -28,7 +28,7 @@ filters = {'grayscale': 'gray.jpg',
            'sobel': 'sobel.jpg'}
 
 filters_methods = {'grayscale': turn_gray,
-                   'invert_colors': invert_colors,
+                   'invert-colors': invert_colors,
                    'red': leave_only_red,
                    'green': leave_only_green,
                    'blue': leave_only_blue,
@@ -141,7 +141,7 @@ def edit_img():
                            filters=filters)
 
 
-@app.route('/editor/apply-filter/<filter_name>', methods=['GET'])
+@app.route('/editor/apply-filter/<filter_name>/', methods=['GET'])
 def apply_filter(filter_name):
     if filter_name in filters:
         session_id = _get_session_id()
@@ -181,7 +181,7 @@ def save_current_image(img_filename):
     return send_from_directory(uploads_dir, img_filename, as_attachment=True)
 
 
-@app.route('/make-current-image/<filtered_img_filename>', methods=['GET'])
+@app.route('/make-current-image/<filtered_img_filename>/', methods=['GET'])
 def switch_img_to_current(filtered_img_filename):
     """Make the filtered image the current image for further filtering."""
     previous_img_filename = _get_img_filename()
