@@ -5,12 +5,9 @@ from werkzeug.utils import secure_filename
 from config import logger
 import shutil
 import uuid
-from filters import apply_blur, apply_grey, apply_sharpen, apply_emboss, apply_sobel, apply_canny, \
-                    apply_gaussian_blur, apply_invert, apply_sepia, apply_vignette, apply_posterize, \
-                    adjust_saturation
+from filters import turn_gray, invert_colors, leave_only_red, leave_only_green, leave_only_blue, apply_blur, apply_sobel
 
 load_dotenv()
-
 app = Flask(__name__,
             template_folder=os.path.join(os.path.dirname(__file__), './templates'),
             static_folder=os.path.join(os.path.dirname(__file__), './static'))
@@ -22,33 +19,21 @@ app.config['ALLOWED_EXTENSIONS'] = {'.png', '.jpg', '.jpeg', '.gif'}
 app.config['DEBUG'] = bool(int(os.environ['DEBUG']))
 app.config['FLASK_APP'] = 'home'
 
-filters = {'blur': 'blur.jpg',
-           'grey': 'grey.jpg',
-           'sharpen': 'sharpen.jpg',
-           'emboss': 'emboss.jpg',
-           'sobel': 'sobel.jpg',
-           'canny': 'canny.jpg',
-           'gaussian blur': 'gaussian_blur.jpg',
-           'invert': 'invert.jpg',
-           'sepia': 'sepia.jpg',
-           'vignette': 'vignette.jpg',
-           'posterize': 'posterize.jpg',
-           'adjust saturation': 'adjust_saturation.jpg',
-          }
+filters = {'grayscale': 'gray.jpg',
+           'invert colors': 'invert_colors.jpg',
+           'red': 'red.jpg',
+           'green': 'green.jpg',
+           'blue': 'blue.jpg',
+           'blur': 'blur.jpg',
+           'sobel': 'sobel.jpg'}
 
-filters_methods = {'blur': apply_blur,
-                   'grey': apply_grey,
-                   'sharpen': apply_sharpen,
-                   'emboss': apply_emboss,
-                   'sobel': apply_sobel,
-                   'canny': apply_canny,
-                   'gaussian_blur': apply_gaussian_blur,
-                   'invert': apply_invert,
-                   'sepia': apply_sepia,
-                   'vignette': apply_vignette,
-                   'posterize': apply_posterize,
-                   'adjust_saturation': adjust_saturation,
-                  }
+filters_methods = {'grayscale': turn_gray,
+                   'invert colors': invert_colors,
+                   'red': leave_only_red,
+                   'green': leave_only_green,
+                   'blue': leave_only_blue,
+                   'blur': apply_blur,
+                   'sobel': apply_sobel}
 
 def _is_allowed_file(filename):
     return os.path.splitext(filename)[1].lower() in app.config['ALLOWED_EXTENSIONS']
