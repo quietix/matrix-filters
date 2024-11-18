@@ -20,7 +20,7 @@ app.config['DEBUG'] = bool(int(os.environ['DEBUG']))
 app.config['FLASK_APP'] = 'home'
 
 filters = {'grayscale': 'gray.jpg',
-           'invert colors': 'invert_colors.jpg',
+           'invert_colors': 'invert_colors.jpg',
            'red': 'red.jpg',
            'green': 'green.jpg',
            'blue': 'blue.jpg',
@@ -28,7 +28,7 @@ filters = {'grayscale': 'gray.jpg',
            'sobel': 'sobel.jpg'}
 
 filters_methods = {'grayscale': turn_gray,
-                   'invert colors': invert_colors,
+                   'invert_colors': invert_colors,
                    'red': leave_only_red,
                    'green': leave_only_green,
                    'blue': leave_only_blue,

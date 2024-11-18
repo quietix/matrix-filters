@@ -29,6 +29,10 @@ def invert_colors(original_img_path, filtered_img_path):
     img_plt = plt.imread(original_img_path)
     new_img_plt = img_plt.copy()
 
+    if new_img_plt.dtype != np.uint8:
+        new_img_plt = (new_img_plt * 255).astype(np.uint8)
+
+    new_img_plt = new_img_plt[:, :, :3]
     new_img_plt = 255 - new_img_plt
 
     plt.imsave(filtered_img_path, new_img_plt)
