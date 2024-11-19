@@ -5,12 +5,15 @@ from werkzeug.utils import secure_filename
 from config import logger
 import shutil
 import uuid
-from filters import turn_gray, invert_colors, leave_only_red, leave_only_green, leave_only_blue, apply_blur, apply_sobel
+from filters import turn_gray, invert_colors, leave_only_red, leave_only_green, leave_only_blue, apply_blur, \
+    apply_sobel, apply_colorized_sobel
 
 load_dotenv()
+
 app = Flask(__name__,
             template_folder=os.path.join(os.path.dirname(__file__), './templates'),
             static_folder=os.path.join(os.path.dirname(__file__), './static'))
+
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 app.config['UPLOAD_FOLDER'] = os.path.abspath('static/uploads')
@@ -25,7 +28,8 @@ filters = {'grayscale': 'gray.jpg',
            'green': 'green.jpg',
            'blue': 'blue.jpg',
            'blur': 'blur.jpg',
-           'sobel': 'sobel.jpg'}
+           'sobel': 'sobel.jpg',
+           'colorized-sobel': 'colorized_sobel.jpg'}
 
 filters_methods = {'grayscale': turn_gray,
                    'invert-colors': invert_colors,
@@ -33,7 +37,8 @@ filters_methods = {'grayscale': turn_gray,
                    'green': leave_only_green,
                    'blue': leave_only_blue,
                    'blur': apply_blur,
-                   'sobel': apply_sobel}
+                   'sobel': apply_sobel,
+                   'colorized-sobel': apply_colorized_sobel}
 
 def _is_allowed_file(filename):
     return os.path.splitext(filename)[1].lower() in app.config['ALLOWED_EXTENSIONS']

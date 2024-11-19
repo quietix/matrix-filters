@@ -3,6 +3,7 @@ import matplotlib.pylab as plt
 import numpy as np
 from scipy.ndimage import convolve
 from PIL import Image, ImageOps
+import cv2
 
 
 def _error_decorator(error_message: str):
@@ -116,3 +117,36 @@ def apply_sobel(original_img_path, filtered_img_path):
     sobel_filtered_image = np.hypot(gx, gy)
 
     plt.imsave(filtered_img_path, sobel_filtered_image, cmap='gray')
+
+
+@_error_decorator("Error in applying colorized sobel")
+def apply_colorized_sobel(original_img_path, filtered_img_path):
+    img_plt = _get_img_stripped_from_exif(original_img_path)
+    grayscale_img = np.mean(img_plt, axis=2)
+
+    gx_kernel = np.array(((1, 0, -1),
+                          (2, 0, -2),
+                          (1, 0, -1)))
+    gy_kernel = np.array(((1, 2, 1),
+                          (0, 0, 0),
+                          (-1, -2, -1)))
+
+    gx = convolve(grayscale_img, gx_kernel)
+    gy = convolve(grayscale_img, gy_kernel)
+
+    magnitude = np.hypot(gx, gy)
+    angle = np.arctan2(gy, gx) * 180 / np.pi
+
+    magnitude_normalized = magnitude / np.max(magnitude)
+    angle_normalized = (angle + 180) / 360.0
+
+    hsv_image: np.ndarray = np.zeros_like(img_plt, dtype=np.float32)
+
+    hsv_image[..., 0] = angle_normalized
+    hsv_image[..., 1] = 1.0
+    hsv_image[..., 2] = magnitude_normalized
+
+    hsv_image_uint8 = (hsv_image * 255).astype(np.uint8)
+    rgb_image = cv2.cvtColor(hsv_image_uint8, cv2.COLOR_HSV2RGB)
+
+    plt.imsave(filtered_img_path, rgb_image)
