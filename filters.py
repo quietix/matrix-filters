@@ -2,6 +2,7 @@ from config import logger
 import matplotlib.pylab as plt
 import numpy as np
 from scipy.ndimage import convolve
+from PIL import Image, ImageOps
 
 
 def _error_decorator(error_message: str):
@@ -17,17 +18,22 @@ def _error_decorator(error_message: str):
     return decorator
 
 
+def _get_img_stripped_from_exif(img_path) -> np.ndarray:
+    with Image.open(img_path) as img:
+        img = ImageOps.exif_transpose(img)
+        return np.array(img)
+
+
 @_error_decorator("Error in applying gray filter")
 def turn_gray(original_img_path, filtered_img_path):
-    img_plt = plt.imread(original_img_path)
+    img_plt = _get_img_stripped_from_exif(original_img_path)
     gray = np.mean(img_plt, axis=2)
     plt.imsave(filtered_img_path, gray,  cmap='gray')
 
 
 @_error_decorator("Error in inverting colors")
 def invert_colors(original_img_path, filtered_img_path):
-    img_plt = plt.imread(original_img_path)
-    new_img_plt = img_plt.copy()
+    new_img_plt = _get_img_stripped_from_exif(original_img_path)
 
     if new_img_plt.dtype != np.uint8:
         new_img_plt = (new_img_plt * 255).astype(np.uint8)
@@ -40,8 +46,7 @@ def invert_colors(original_img_path, filtered_img_path):
 
 @_error_decorator("Error in leaving only red")
 def leave_only_red(original_img_path, filtered_img_path):
-    img_plt = plt.imread(original_img_path)
-    new_img_plt = img_plt.copy()
+    new_img_plt = _get_img_stripped_from_exif(original_img_path)
 
     new_img_plt[:, :, 1], new_img_plt[:, :, 2] = 0, 0
 
@@ -50,8 +55,7 @@ def leave_only_red(original_img_path, filtered_img_path):
 
 @_error_decorator("Error in leaving only green")
 def leave_only_green(original_img_path, filtered_img_path):
-    img_plt = plt.imread(original_img_path)
-    new_img_plt = img_plt.copy()
+    new_img_plt = _get_img_stripped_from_exif(original_img_path)
 
     new_img_plt[:, :, 0], new_img_plt[:, :, 2] = 0, 0
 
@@ -60,8 +64,7 @@ def leave_only_green(original_img_path, filtered_img_path):
 
 @_error_decorator("Error in leaving only blue")
 def leave_only_blue(original_img_path, filtered_img_path):
-    img_plt = plt.imread(original_img_path)
-    new_img_plt = img_plt.copy()
+    new_img_plt = _get_img_stripped_from_exif(original_img_path)
 
     new_img_plt[:, :, 0], new_img_plt[:, :, 1] = 0, 0
 
@@ -70,8 +73,7 @@ def leave_only_blue(original_img_path, filtered_img_path):
 
 @_error_decorator("Error in applying blur")
 def apply_blur(original_img_path, filtered_img_path):
-    img_plt = plt.imread(original_img_path)
-    new_img_plt = img_plt.copy()
+    new_img_plt = _get_img_stripped_from_exif(original_img_path)
 
     blur_kernel = np.ones((3, 3)) / 9
 
@@ -83,8 +85,7 @@ def apply_blur(original_img_path, filtered_img_path):
 
 @_error_decorator("Error in applying blur")
 def apply_blur(original_img_path, filtered_img_path):
-    img_plt = plt.imread(original_img_path)
-    new_img_plt = img_plt.copy()
+    new_img_plt = _get_img_stripped_from_exif(original_img_path)
 
     blur_kernel = np.array(((1, 4, 6, 4, 1),
                             (4, 16, 24, 16, 4),
@@ -100,7 +101,7 @@ def apply_blur(original_img_path, filtered_img_path):
 
 @_error_decorator("Error in applying sobel")
 def apply_sobel(original_img_path, filtered_img_path):
-    img_plt = plt.imread(original_img_path)
+    img_plt = _get_img_stripped_from_exif(original_img_path)
     grayscale_img = np.mean(img_plt, axis=2)
 
     gx_kernel = np.array(((1, 0, -1),
