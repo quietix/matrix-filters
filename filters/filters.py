@@ -5,7 +5,7 @@ from scipy.ndimage import convolve
 from PIL import Image, ImageOps
 import cv2
 from typing import Optional
-from animegan import AnimeGAN
+from .animegan import AnimeGAN
 
 
 hayao_64 = "hayao_64"
