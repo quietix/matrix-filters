@@ -1,3 +1,5 @@
+import os.path
+
 from config import logger
 import matplotlib.pylab as plt
 import numpy as np
@@ -13,11 +15,12 @@ hayao_60 = "hayao_60"
 paprika_54 = "paprika_54"
 shinkai_53 = "shinkai_53"
 
-model_paths = {hayao_64: r"models\Hayao_64.onnx",
-               hayao_60: r"models\Hayao_60.onnx",
-               paprika_54: r"models\Paprika_54.onnx",
-               shinkai_53: r"models\Shinkai_53.onnx"}
+models_dir = "models"
 
+model_paths = {hayao_64: os.path.join(models_dir, "Hayao_64.onnx"),
+               hayao_60: os.path.join(models_dir, "Hayao_60.onnx"),
+               paprika_54: os.path.join(models_dir, "Paprika_54.onnx"),
+               shinkai_53: os.path.join(models_dir, "Shinkai_53.onnx")}
 
 def _error_decorator(error_message: str):
     def decorator(func):
