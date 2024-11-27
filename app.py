@@ -5,8 +5,8 @@ from werkzeug.utils import secure_filename
 from config import logger
 import shutil
 import uuid
-from filters import turn_gray, invert_colors, leave_only_red, leave_only_green, leave_only_blue, apply_box_blur, \
-    apply_blur_gaussian, apply_sharpen, apply_sobel, apply_colorized_sobel
+from filters import *
+from unidecode import unidecode
 
 load_dotenv()
 
@@ -31,7 +31,12 @@ filters = {'grayscale': 'gray.jpg',
            'gaussian-blur': 'gaussian_blur.jpg',
            'sharpen': 'sharpen.jpg',
            'sobel': 'sobel.jpg',
-           'colorized-sobel': 'colorized_sobel.jpg'}
+           'colorized-sobel': 'colorized_sobel.jpg',
+           'cartoonize': 'cartoonize.jpg',
+           'animize-hayao-64': 'animization_hayao_64.jpg',
+           'animize-hayao-60': 'animization_hayao_60.jpg',
+           'animize-paprika-54': 'animization_paprika_54.jpg',
+           'animize-shinkai-53': 'animization_shinkai_53.jpg'}
 
 filters_methods = {'grayscale': turn_gray,
                    'invert-colors': invert_colors,
@@ -42,7 +47,12 @@ filters_methods = {'grayscale': turn_gray,
                    'gaussian-blur': apply_blur_gaussian,
                    'sharpen': apply_sharpen,
                    'sobel': apply_sobel,
-                   'colorized-sobel': apply_colorized_sobel}
+                   'colorized-sobel': apply_colorized_sobel,
+                   'cartoonize': cartoonize,
+                   'animize-hayao-64': apply_animization_hayao_64,
+                   'animize-hayao-60': apply_animization_hayao_60,
+                   'animize-paprika-54': apply_animization_paprika_54,
+                   'animize-shinkai-53': apply_animization_shinkai_53}
 
 def _is_allowed_file(filename):
     return os.path.splitext(filename)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -112,6 +122,7 @@ def home():
     if request.method == 'POST':
         _create_dirs()
         uploaded_img = request.files.get('uploaded_img')
+        uploaded_img.filename = unidecode(uploaded_img.filename)
 
         if uploaded_img and _is_allowed_file(uploaded_img.filename):
             uploaded_img_filename = secure_filename(uploaded_img.filename)
