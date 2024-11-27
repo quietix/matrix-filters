@@ -221,9 +221,24 @@ def apply_animization_hayao_64(original_img_path, filtered_img_path):
     if model_path is None:
         raise FileNotFoundError(f"Model path for {hayao_64} not found.")
 
-    animegan = AnimeGAN(model_path=model_path, downsize_ratio=1)
+    animegan = AnimeGAN(model_path=model_path)
+
     img = cv2.imread(original_img_path)
+
+    height, width = img.shape[0], img.shape[1]
+
+    if width > 3000 or height > 3000:
+        downsize_ratio = 0.2
+    elif width > 2000 or height > 2000:
+        downsize_ratio = 0.4
+    elif width > 1500 or height > 1500:
+        downsize_ratio = 0.7
+    else:
+        downsize_ratio = 1.0
+
+    animegan.downsize_ratio = downsize_ratio
     img = animegan(img)
+
     cv2.imwrite(filtered_img_path, img)
 
 
@@ -234,9 +249,24 @@ def apply_animization_hayao_60(original_img_path, filtered_img_path):
     if model_path is None:
         raise FileNotFoundError(f"Model path for {hayao_60} not found.")
 
-    animegan = AnimeGAN(model_path=model_path, downsize_ratio=1)
+    animegan = AnimeGAN(model_path=model_path)
+
     img = cv2.imread(original_img_path)
+
+    height, width = img.shape[0], img.shape[1]
+
+    if width > 3000 or height > 3000:
+        downsize_ratio = 0.2
+    elif width > 2000 or height > 2000:
+        downsize_ratio = 0.4
+    elif width > 1500 or height > 1500:
+        downsize_ratio = 0.7
+    else:
+        downsize_ratio = 1.0
+
+    animegan.downsize_ratio = downsize_ratio
     img = animegan(img)
+
     cv2.imwrite(filtered_img_path, img)
 
 
@@ -247,9 +277,24 @@ def apply_animization_paprika_54(original_img_path, filtered_img_path):
     if model_path is None:
         raise FileNotFoundError(f"Model path for {paprika_54} not found.")
 
-    animegan = AnimeGAN(model_path=model_path, downsize_ratio=1)
+    animegan = AnimeGAN(model_path=model_path)
+
     img = cv2.imread(original_img_path)
+
+    height, width = img.shape[0], img.shape[1]
+
+    if width > 3000 or height > 3000:
+        downsize_ratio = 0.2
+    elif width > 2000 or height > 2000:
+        downsize_ratio = 0.4
+    elif width > 1500 or height > 1500:
+        downsize_ratio = 0.7
+    else:
+        downsize_ratio = 1.0
+
+    animegan.downsize_ratio = downsize_ratio
     img = animegan(img)
+
     cv2.imwrite(filtered_img_path, img)
 
 
@@ -260,7 +305,22 @@ def apply_animization_shinkai_53(original_img_path, filtered_img_path):
     if model_path is None:
         raise FileNotFoundError(f"Model path for {shinkai_53} not found.")
 
-    animegan = AnimeGAN(model_path=model_path, downsize_ratio=1)
+    animegan = AnimeGAN(model_path=model_path)
+
     img = cv2.imread(original_img_path)
+
+    height, width = img.shape[0], img.shape[1]
+
+    if width > 3000 or height > 3000:
+        downsize_ratio = 0.2
+    elif width > 2000 or height > 2000:
+        downsize_ratio = 0.4
+    elif width > 1500 or height > 1500:
+        downsize_ratio = 0.7
+    else:
+        downsize_ratio = 1.0
+
+    animegan.downsize_ratio = downsize_ratio
     img = animegan(img)
+
     cv2.imwrite(filtered_img_path, img)
